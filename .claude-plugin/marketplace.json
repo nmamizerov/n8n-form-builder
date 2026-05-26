@@ -1,0 +1,18 @@
+{
+  "name": "n8n-form-builder-marketplace",
+  "owner": {
+    "name": "nmamizerov",
+    "email": "nmamizerov@gmail.com"
+  },
+  "metadata": {
+    "description": "Маркетплейс с плагином для создания n8n воркфлоу-обработчиков форм.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "n8n-form-builder",
+      "source": "./",
+      "description": "Мастер создания n8n воркфлоу-обработчиков форм через диалог и MCP n8n."
+    }
+  ]
+}

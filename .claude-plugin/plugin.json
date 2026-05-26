@@ -1,0 +1,10 @@
+{
+  "name": "n8n-form-builder",
+  "version": "0.1.0",
+  "description": "Мастер для нетехнических менеджеров: создаёт в n8n воркфлоу-обработчики форм (Webhook → валидация → раскидывание во все источники сразу: amoCRM, Telegram, Postgres) через диалог на человеческом языке и MCP-сервер n8n.",
+  "author": {
+    "name": "nmamizerov",
+    "email": "nmamizerov@gmail.com"
+  },
+  "keywords": ["n8n", "mcp", "workflow", "forms", "amocrm", "telegram", "automation"]
+}
