@@ -8,11 +8,15 @@
 
 ```
 Webhook → Code "Валидация" → IF (valid?)
-                               ├ true  →  amoCRM (HTTP)
+                               ├ true  →  amoCRM Create Contact ─→ amoCRM Create Lead
                                │          Telegram (отправка)
                                │          Postgres (insert)
                                └ false →  Telegram "Алерт"
 ```
+
+Цели fan-out — `amoCRM Create Contact`, `Telegram`, `Postgres`. У amoCRM это первая нода
+в двухнодной связке (Contact → Lead), потому что community-нода `n8n-nodes-amocrm` не умеет
+создать лид с новым контактом в одной операции (см. `amocrm-api.md`).
 
 ## Как устроены `connections` (ключ — ИМЯ ноды, не id)
 
@@ -32,7 +36,7 @@ Webhook → Code "Валидация" → IF (valid?)
     "IF Валидно": {
       "main": [
         [
-          { "node": "amoCRM", "type": "main", "index": 0 },
+          { "node": "amoCRM Create Contact", "type": "main", "index": 0 },
           { "node": "Telegram", "type": "main", "index": 0 },
           { "node": "Postgres", "type": "main", "index": 0 }
         ],
@@ -40,6 +44,9 @@ Webhook → Code "Валидация" → IF (valid?)
           { "node": "Telegram Алерт", "type": "main", "index": 0 }
         ]
       ]
+    },
+    "amoCRM Create Contact": {
+      "main": [[{ "node": "amoCRM Create Lead", "type": "main", "index": 0 }]]
     }
   }
 }
@@ -48,6 +55,8 @@ Webhook → Code "Валидация" → IF (valid?)
 Разбор:
 - `"IF Валидно".main[0]` — выход **true**: массив из ТРЁХ целей → параллельный fan-out.
 - `"IF Валидно".main[1]` — выход **false**: одна цель, нода алерта.
+- `"amoCRM Create Contact"` тянет за собой `amoCRM Create Lead` (цепочка), при этом
+  Telegram и Postgres продолжают работать параллельно.
 
 ## Через MCP-диффы
 

@@ -48,23 +48,68 @@
     },
     {
       "id": "44444444-4444-4444-4444-444444444444",
-      "name": "amoCRM",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [980, 160],
+      "name": "amoCRM Create Contact",
+      "type": "n8n-nodes-amocrm.amocrm",
+      "typeVersion": 1,
+      "position": [980, 80],
+      "credentials": {
+        "amocrmLongLivedApi": {
+          "id": "REPLACE_WITH_CREDENTIAL_ID",
+          "name": "AmoCRM Long-Lived"
+        }
+      },
       "parameters": {
-        "method": "POST",
-        "url": "https://YOUR-SUBDOMAIN.amocrm.ru/api/v4/leads",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "oAuth2Api",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify([{ name: $json.data.name, _embedded: { contacts: [{ first_name: $json.data.name, custom_fields_values: [{ field_code: 'EMAIL', values: [{ value: $json.data.email, enum_code: 'WORK' }] }, { field_code: 'PHONE', values: [{ value: $json.data.phone, enum_code: 'WORK' }] }] }] } }]) }}",
-        "options": {}
+        "authentication": "longLivedToken",
+        "resource": "contacts",
+        "operation": "createContacts",
+        "json": true,
+        "jsonString": "={{ JSON.stringify([{ name: $json.data.name, custom_fields_values: [ { field_code: 'PHONE', values: [ { value: $json.data.phone, enum_code: 'WORK' } ] }, { field_code: 'EMAIL', values: [ { value: $json.data.email, enum_code: 'WORK' } ] } ] }]) }}"
       }
     },
     {
       "id": "55555555-5555-5555-5555-555555555555",
+      "name": "amoCRM Create Lead",
+      "type": "n8n-nodes-amocrm.amocrm",
+      "typeVersion": 1,
+      "position": [1200, 80],
+      "credentials": {
+        "amocrmLongLivedApi": {
+          "id": "REPLACE_WITH_CREDENTIAL_ID",
+          "name": "AmoCRM Long-Lived"
+        }
+      },
+      "parameters": {
+        "authentication": "longLivedToken",
+        "resource": "leads",
+        "operation": "createLeads",
+        "json": false,
+        "collection": {
+          "lead": [
+            {
+              "name": "=Заявка с сайта: {{ $json.data.name }}",
+              "pipeline_id": 0,
+              "status_id": 0,
+              "_embedded": {
+                "contacts": [
+                  {
+                    "id": {
+                      "contact": [
+                        {
+                          "id": "={{ $json._embedded.contacts[0].id }}",
+                          "is_main": true
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "66666666-6666-6666-6666-666666666666",
       "name": "Telegram",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
@@ -78,7 +123,7 @@
       }
     },
     {
-      "id": "66666666-6666-6666-6666-666666666666",
+      "id": "77777777-7777-7777-7777-777777777777",
       "name": "Postgres",
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.5,
@@ -92,7 +137,7 @@
       }
     },
     {
-      "id": "77777777-7777-7777-7777-777777777777",
+      "id": "88888888-8888-8888-8888-888888888888",
       "name": "Telegram Алерт",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
@@ -115,7 +160,7 @@
     "IF Валидно": {
       "main": [
         [
-          { "node": "amoCRM", "type": "main", "index": 0 },
+          { "node": "amoCRM Create Contact", "type": "main", "index": 0 },
           { "node": "Telegram", "type": "main", "index": 0 },
           { "node": "Postgres", "type": "main", "index": 0 }
         ],
@@ -123,6 +168,9 @@
           { "node": "Telegram Алерт", "type": "main", "index": 0 }
         ]
       ]
+    },
+    "amoCRM Create Contact": {
+      "main": [[{ "node": "amoCRM Create Lead", "type": "main", "index": 0 }]]
     }
   },
   "settings": {}

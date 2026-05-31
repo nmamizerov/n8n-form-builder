@@ -17,7 +17,12 @@
 
 | Файл | Кейс | Триггер | Ноды | Назначения |
 |------|------|---------|------|-----------|
-| `form-to-3-destinations.json` | Эталон: лид с формы во все источники сразу + алерт на невалид | Webhook (POST) | Webhook → Code (валидация) → IF → fan-out | amoCRM + Telegram + Postgres; ветка ошибки → Telegram-алерт |
+| `form-to-3-destinations.json` | Эталон: лид с формы во все источники сразу + алерт на невалид | Webhook (POST) | Webhook → Code (валидация) → IF → fan-out; amoCRM = связка Contact → Lead | amoCRM (community-нода `n8n-nodes-amocrm`, yatolstoy) + Telegram + Postgres; ветка ошибки → Telegram-алерт |
 
-> Плейсхолдеры в эталоне (`YOUR-SUBDOMAIN`, `YOUR_CHAT_ID`, таблица `public.leads`,
-> путь `lead-acme`) заменяются на данные конкретного менеджера при сборке.
+> Плейсхолдеры в эталоне (`REPLACE_WITH_CREDENTIAL_ID`, `YOUR_CHAT_ID`, `pipeline_id: 0`,
+> `status_id: 0`, таблица `public.leads`, путь `lead-acme`) заменяются на данные
+> конкретного менеджера при сборке.
+>
+> **Важно про amoCRM:** community-нода `n8n-nodes-amocrm` ставится только на self-hosted
+> n8n (или Enterprise Cloud). Подробности и подводные камни — в
+> `../skills/n8n-build-from-examples/references/amocrm-api.md`.

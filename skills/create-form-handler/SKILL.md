@@ -33,8 +33,11 @@ argument-hint: "[название формы]"
    тип/правило (email, телефон, число, текст, один из вариантов…). См. соответствие правил
    коду в скилле n8n-build-from-examples → `references/code-validation.md`.
 3. **Куда слать результат?** По умолчанию во все три, но подтверди и собери параметры:
-   - **amoCRM**: поддомен `<x>.amocrm.ru`, какие поля лида/контакта заполнять. Нужна
-     OAuth2-credential amoCRM в n8n.
+   - **amoCRM**: поддомен `<x>.amocrm.ru`, **pipeline_id и status_id воронки** (куда падают лиды),
+     какие поля контакта/лида заполнять. Нужна credential `amocrmLongLivedApi` (Long-Lived токен)
+     в n8n. Используется community-нода `n8n-nodes-amocrm` (yatolstoy) — её сначала надо
+     поставить в n8n (Settings → Community Nodes → `n8n-nodes-amocrm`); **работает только
+     на self-hosted n8n**, на обычном Cloud — нет. Лид создаётся ДВУМЯ нодами: Contact → Lead.
    - **Telegram**: chat_id рабочего чата, формат сообщения. Нужна Telegram-credential (токен бота).
    - **Postgres**: схема.таблица и колонки. Нужна Postgres-credential.
 4. **Куда слать алерты о невалидных заявках?** По умолчанию — тот же Telegram-чат
